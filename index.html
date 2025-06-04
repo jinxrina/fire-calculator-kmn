@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MM Fire Safety Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d32f2f;
+            --primary-light: #ff6659;
+            --primary-dark: #9a0007;
+            --secondary: #1e3a8a;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            background-color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.1;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="white" d="M50,5 L55,20 L70,20 L60,30 L65,45 L50,35 L35,45 L40,30 L30,20 L45,20 Z"/></svg>');
+            background-size: 100px 100px;
+            animation: moveBackground 60s linear infinite;
+        }
+        
+        @keyframes moveBackground {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 1000px; }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        
+        .tab-btn:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+        
+        .tab-btn.active {
+            background-color: white;
+            color: var(--primary);
+        }
+        
+        main {
+            padding: 2rem 0;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-light);
+            color: white;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+        
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .result-section {
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .result-section.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 500;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .compliance-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .compliance-status.compliant {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+        
+        .compliance-status.non-compliant {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+        }
+        
+        .info-tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .info-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: var(--gray);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .tooltip-content {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--dark);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 5px;
+            width: 250px;
+            font-size: 0.875rem;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .info-tooltip:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-10px);
+        }
+        
+        .tooltip-content::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--dark) transparent transparent transparent;
+        }
+        
+        .reference-section {
+            background-color: var(--gray-light);
+            padding: 2rem 0;
+        }
+        
+        .reference-list {
+            list-style: none;
+        }
+        
+        .reference-item {
+            padding: 1rem;
+            border-left: 3px solid var(--primary);
+            background-color: white;
+            margin-bottom: 1rem;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .reference-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        .copyright {
+            font-size: 0.875rem;
+            opacity: 0.7;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Animations */
+        .animated-icon {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--gray-light);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 5px;
+            width: 0;
+            transition: width 1s ease;
+        }
+        
+        /* Interactive elements */
+        .accordion {
+            border: 1px solid var(--gray-light);
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            padding: 1rem;
+            background-color: var(--light);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .accordion-header:hover {
+            background-color: var(--gray-light);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 1rem;
+        }
+        
+        .accordion-content.open {
+            max-height: 500px;
+            padding: 1rem;
+        }
+        
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-header.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Checklist styles */
+        .checklist {
+            list-style: none;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .checklist-icon {
+            margin-right: 0.75rem;
+            color: var(--success);
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+        
+        /* Animation for fire */
+        .fire-animation {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+        }
+        
+        .fire-base {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(to top, #ff6600, #ff9900);
+            border-radius: 50% 50% 35% 35%;
+            animation: flicker 0.5s infinite alternate;
+        }
+        
+        .fire-middle {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(to top, #ff9900, #ffcc00);
+            border-radius: 50% 50% 20% 20%;
+            animation: flicker 0.4s infinite alternate 0.1s;
+        }
+        
+        .fire-top {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 40px;
+            background: linear-gradient(to top, #ffcc00, #ffff66);
+            border-radius: 50% 50% 35% 35%;
+            animation: flicker 0.3s infinite alternate 0.2s;
+        }
+        
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(0.9, 1.1); }
+            100% { transform: translateX(-50%) scale(1.1, 0.9); }
+        }
+        
+        /* Water drop animation for sprinkler */
+        .sprinkler-animation {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+        }
+        
+        .sprinkler-head {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 15px;
+            background-color: #888;
+            border-radius: 5px;
+        }
+        
+        .water-drop {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 12px;
+            background-color: #4fc3f7;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: dropFall 1.5s infinite;
+            opacity: 0;
+        }
+        
+        .water-drop:nth-child(2) {
+            left: 40%;
+            animation-delay: 0.3s;
+        }
+        
+        .water-drop:nth-child(3) {
+            left: 60%;
+            animation-delay: 0.6s;
+        }
+        
+        .water-drop:nth-child(4) {
+            left: 30%;
+            animation-delay: 0.9s;
+        }
+        
+        .water-drop:nth-child(5) {
+            left: 70%;
+            animation-delay: 1.2s;
+        }
+        
+        @keyframes dropFall {
+            0% { top: 15px; opacity: 0; }
+            10% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { top: 90px; opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-bg"></div>
+        <div class="container">
+            <div class="header-content">
+                <h1>MM Fire Safety Calculator</h1>
+                <p class="subtitle">Compliant with SCDF Fire Code & Singapore Standards <br> Created By Kyaw Myo Naing </p>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="building">Building Classification</button>
+                    <button class="tab-btn" data-tab="alarm">Fire Alarm Systems</button>
+                    <button class="tab-btn" data-tab="protection">Fire Protection</button>
+                    <button class="tab-btn" data-tab="evacuation">Evacuation</button>
+                    <button class="tab-btn" data-tab="management">Safety Management</button>
+                    <button class="tab-btn" data-tab="compliance">Compliance Checker</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <!-- Building Classification Tab -->
+            <div class="tab-content active" id="building-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        </div>
+                        <h2>Building Classification</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="building-type">Building Type</label>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                Building classification affects fire safety requirements as per SS 645 and Fire Code.
+                            </div>
+                        </div>
+                        <select id="building-type">
+                            <option value="">Select Building Type</option>
+                            <option value="residential">Residential (Purpose Group I)</option>
+                            <option value="institutional">Institutional (Purpose Group II)</option>
+                            <option value="office">Office (Purpose Group III)</option>
+                            <option value="shop">Shop/Commercial (Purpose Group IV)</option>
+                            <option value="assembly">Assembly (Purpose Group V)</option>
+                            <option value="factory">Factory/Industrial (Purpose Group VI)</option>
+                            <option value="storage">Storage (Purpose Group VII)</option>
+                            <option value="other">Other (Purpose Group VIII)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="building-height">Building Height (m)</label>
+                        <input type="number" id="building-height" min="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="total-floor-area">Total Floor Area (m²)</label>
+                        <input type="number" id="total-floor-area" min="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="number-of-floors">Number of Floors</label>
+                        <input type="number" id="number-of-floors" min="1" step="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="occupancy-load">Occupancy Load (persons)</label>
+                        <div class="info-tooltip">
+                            <div class="info-icon">i</div>
+                            <div class="tooltip-content">
+                                Calculated based on floor area and occupancy load factors as per SS 645.
+                            </div>
+                        </div>
+                        <input type="number" id="occupancy-load" min="0" step="1">
+                    </div>
+                    
+                    <button class="btn" id="calculate-building">Calculate Requirements</button>
+                    
+                    <div class="result-section" id="building-results">
+                        <h3>Building Classification Results</h3>
+                        <div class="result-item">
+                            <div class="result-label">Building Purpose Group</div>
+                            <div class="result-value" id="result-purpose-group">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Occupancy Load Factor</div>
+                            <div class="result-value" id="result-occupancy-factor">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Maximum Occupancy</div>
+                            <div class="result-value" id="result-max-occupancy">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Fire Compartmentation Required</div>
+                            <div class="result-value" id="result-compartmentation">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Building Classification Guide</h2>
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Purpose Groups (SS 645)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Singapore's Fire Code classifies buildings into purpose groups:</p>
+                            <ul>
+                                <li><strong>Purpose Group I:</strong> Residential</li>
+                                <li><strong>Purpose Group II:</strong> Institutional</li>
+                                <li><strong>Purpose Group III:</strong> Office</li>
+                                <li><strong>Purpose Group IV:</strong> Shop/Commercial</li>
+                                <li><strong>Purpose Group V:</strong> Assembly</li>
+                                <li><strong>Purpose Group VI:</strong> Factory/Industrial</li>
+                                <li><strong>Purpose Group VII:</strong> Storage</li>
+                                <li><strong>Purpose Group VIII:</strong> Other</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Occupancy Load Factors</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Occupancy load factors as per SS 645:</p>
+                            <ul>
+                                <li>Residential: 20 m² per person</li>
+                                <li>Office: 9 m² per person</li>
+                                <li>Shop/Commercial: 3 m² per person</li>
+                                <li>Assembly: 1.5 m² per person</li>
+                                <li>Factory/Industrial: 10 m² per person</li>
+                                <li>Storage: 30 m² per person</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fire Alarm Systems Tab -->
+            <div class="tab-content" id="alarm-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        </div>
+                        <h2>Fire Alarm System Calculator</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alarm-building-type">Building Type</label>
+                        <select id="alarm-building-type">
+                            <option value="">Select Building Type</option>
+                            <option value="residential">Residential</option>
+                            <option value="office">Office</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="institutional">Institutional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alarm-floor-area">Floor Area (m²)</label>
+                        <input type="number" id="alarm-floor-area" min="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alarm-floors">Number of Floors</label>
+                        <input type="number" id="alarm-floors" min="1" step="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alarm-ceiling-height">Average Ceiling Height (m)</label>
+                        <input type="number" id="alarm-ceiling-height" min="2" step="0.1" value="3">
+                    </div>
+                    
+                    <button class="btn" id="calculate-alarm">Calculate Alarm Requirements</button>
+                    
+                    <div class="result-section" id="alarm-results">
+                        <h3>Fire Alarm System Requirements</h3>
+                        <div class="result-item">
+                            <div class="result-label">System Type Required</div>
+                            <div class="result-value" id="result-alarm-type">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Smoke Detectors Required</div>
+                            <div class="result-value" id="result-smoke-detectors">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Heat Detectors Required</div>
+                            <div class="result-value" id="result-heat-detectors">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Manual Call Points Required</div>
+                            <div class="result-value" id="result-call-points">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Alarm Sounders/Strobes Required</div>
+                            <div class="result-value" id="result-sounders">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Fire Alarm Panels Required</div>
+                            <div class="result-value" id="result-panels">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Fire Alarm System Guide</h2>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Detector Coverage Requirements (SS CP 10)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>As per SS CP 10, detector coverage requirements:</p>
+                            <ul>
+                                <li><strong>Smoke Detectors:</strong> Maximum coverage area of 100 m² per detector</li>
+                                <li><strong>Heat Detectors:</strong> Maximum coverage area of 50 m² per detector</li>
+                                <li><strong>Maximum Distance:</strong> No point should be more than 7.5m from a detector</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Manual Call Points (SS CP 10)</span>
+                            <span class="accordion-icon">▼</span>
+                        
+                        </div>
+                        <div class="accordion-content">
+                            <p>Manual call point placement requirements:</p>
+                            <ul>
+                                <li>Located near exits and escape routes</li>
+                                <li>Maximum travel distance to a call point: 30m</li>
+                                <li>Mounting height: 1.4m above floor level</li>
+                                <li>At least one call point per floor</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Alarm Sounders & Visual Alarms</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Requirements for alarm sounders and visual indicators:</p>
+                            <ul>
+                                <li>Minimum sound level: 65 dBA or 5 dBA above ambient noise level</li>
+                                <li>Maximum sound level: 120 dBA</li>
+                                <li>Visual alarms required in areas with high ambient noise or for inclusive design</li>
+                                <li>Sound level at bedhead in sleeping accommodations: minimum 75 dBA</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="fire-animation">
+                        <div class="fire-base"></div>
+                        <div class="fire-middle"></div>
+                        <div class="fire-top"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fire Protection Tab -->
+            <div class="tab-content" id="protection-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"></path><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"></path><circle cx="12" cy="12" r="2"></circle><path d="M16.2 7.8c2.3 2.4 2.3 6.2 0 8.5"></path><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"></path></svg>
+                        </div>
+                        <h2>Fire Protection Systems Calculator</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="protection-building-type">Building Type</label>
+                        <select id="protection-building-type">
+                            <option value="">Select Building Type</option>
+                            <option value="residential">Residential</option>
+                            <option value="office">Office</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="institutional">Institutional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="protection-floor-area">Floor Area (m²)</label>
+                        <input type="number" id="protection-floor-area" min="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="protection-height">Building Height (m)</label>
+                        <input type="number" id="protection-height" min="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="protection-hazard">Hazard Classification</label>
+                        <select id="protection-hazard">
+                            <option value="light">Light Hazard (LH)</option>
+                            <option value="ordinary1">Ordinary Hazard Group 1 (OH1)</option>
+                            <option value="ordinary2">Ordinary Hazard Group 2 (OH2)</option>
+                            <option value="ordinary3">Ordinary Hazard Group 3 (OH3)</option>
+                            <option value="high1">High Hazard Group 1 (HH1)</option>
+                            <option value="high2">High Hazard Group 2 (HH2)</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn" id="calculate-protection">Calculate Protection Requirements</button>
+                    
+                    <div class="result-section" id="protection-results">
+                        <h3>Fire Protection System Requirements</h3>
+                        <div class="result-item">
+                            <div class="result-label">Sprinkler System Required</div>
+                            <div class="result-value" id="result-sprinkler-required">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Sprinkler Type</div>
+                            <div class="result-value" id="result-sprinkler-type">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Number of Sprinkler Heads</div>
+                            <div class="result-value" id="result-sprinkler-heads">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Fire Extinguishers Required</div>
+                            <div class="result-value" id="result-extinguishers">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Fire Hose Reels Required</div>
+                            <div class="result-value" id="result-hose-reels">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Fire Protection Systems Guide</h2>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Sprinkler Systems (SS CP 52)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Sprinkler system requirements as per SS CP 52:</p>
+                            <ul>
+                                <li><strong>Light Hazard:</strong> 12 m² coverage per sprinkler</li>
+                                <li><strong>Ordinary Hazard:</strong> 9 m² coverage per sprinkler</li>
+                                <li><strong>High Hazard:</strong> 6 m² coverage per sprinkler</li>
+                                <li>Maximum distance between sprinklers: 4.6m for standard coverage</li>
+                                <li>Mandatory for buildings exceeding 24m in height</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Fire Extinguishers</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Fire extinguisher requirements:</p>
+                            <ul>
+                                <li>Maximum travel distance to an extinguisher: 15m</li>
+                                <li>Minimum rating: 13A for water type extinguishers</li>
+                                <li>One extinguisher per 200 m² of floor area</li>
+                                <li>Special requirements for kitchen (Class F), electrical (Class E), and flammable liquid (Class B) hazards</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Fire Hose Reels</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Fire hose reel requirements:</p>
+                            <ul>
+                                <li>Coverage radius: 30m (including hose length and water jet)</li>
+                                <li>Standard hose length: 30m</li>
+                                <li>Positioned near exits and in conspicuous locations</li>
+                                <li>Required for most buildings exceeding 1000 m² in floor area</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="sprinkler-animation">
+                        <div class="sprinkler-head"></div>
+                        <div class="water-drop"></div>
+                        <div class="water-drop"></div>
+                        <div class="water-drop"></div>
+                        <div class="water-drop"></div>
+                        <div class="water-drop"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Evacuation Tab -->
+            <div class="tab-content" id="evacuation-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                        </div>
+                        <h2>Evacuation Requirements Calculator</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="evac-building-type">Building Type</label>
+                        <select id="evac-building-type">
+                            <option value="">Select Building Type</option>
+                            <option value="residential">Residential</option>
+                            <option value="office">Office</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="institutional">Institutional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="evac-floor-area">Floor Area (m²)</label>
+                        <input type="number" id="evac-floor-area" min="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="evac-occupancy">Occupancy Load (persons)</label>
+                        <input type="number" id="evac-occupancy" min="0" step="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="evac-floors">Number of Floors</label>
+                        <input type="number" id="evac-floors" min="1" step="1">
+                    </div>
+                    
+                    <button class="btn" id="calculate-evacuation">Calculate Evacuation Requirements</button>
+                    
+                    <div class="result-section" id="evacuation-results">
+                        <h3>Evacuation Requirements</h3>
+                        <div class="result-item">
+                            <div class="result-label">Number of Exit Staircases Required</div>
+                            <div class="result-value" id="result-staircases">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Minimum Exit Width Required</div>
+                            <div class="result-value" id="result-exit-width">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Maximum Travel Distance</div>
+                            <div class="result-value" id="result-travel-distance">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Emergency Lighting Required</div>
+                            <div class="result-value" id="result-emergency-lighting">-</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Exit Signs Required</div>
+                            <div class="result-value" id="result-exit-signs">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Evacuation Requirements Guide</h2>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Exit Requirements</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Exit requirements as per Singapore Fire Code:</p>
+                            <ul>
+                                <li>Minimum 2 exits for occupancy over 50 persons</li>
+                                <li>Minimum exit width: 1000mm</li>
+                                <li>Additional 500mm width per 100 persons above 200</li>
+                                <li>Exits should be remotely located from each other</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Travel Distance Limits</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Maximum travel distances to exits:</p>
+                            <ul>
+                                <li><strong>Non-sprinklered buildings:</strong>
+                                    <ul>
+                                        <li>Dead-end: 15m</li>
+                                        <li>Common path: 20m</li>
+                                        <li>Total: 45m</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Sprinklered buildings:</strong>
+                                    <ul>
+                                        <li>Dead-end: 18m</li>
+                                        <li>Common path: 25m</li>
+                                        <li>Total: 60m</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Emergency Lighting</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Emergency lighting requirements:</p>
+                            <ul>
+                                <li>Required in all exit staircases and escape routes</li>
+                                <li>Minimum illumination level: 5 lux at floor level</li>
+                                <li>Minimum duration: 2 hours</li>
+                                <li>Maximum spacing between lights: 15m</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Safety Management Tab -->
+            <div class="tab-content" id="management-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M9 14h.01"></path><path d="M12 14h.01"></path><path d="M15 14h.01"></path><path d="M9 18h.01"></path><path d="M12 18h.01"></path><path d="M15 18h.01"></path></svg>
+                        </div>
+                        <h2>Fire Safety Management Plan</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="management-building-type">Building Type</label>
+                        <select id="management-building-type">
+                            <option value="">Select Building Type</option>
+                            <option value="residential">Residential</option>
+                            <option value="office">Office</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="institutional">Institutional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="management-occupancy">Occupancy Load (persons)</label>
+                        <input type="number" id="management-occupancy" min="0" step="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="management-floors">Number of Floors</label>
+                        <input type="number" id="management-floors" min="1" step="1">
+                    </div>
+                    
+                    <button class="btn" id="generate-fsmp">Generate Fire Safety Management Plan</button>
+                    
+                    <div class="result-section" id="management-results">
+                        <h3>Fire Safety Management Plan Requirements</h3>
+                        
+                        <div class="accordion">
+                            <div class="accordion-header">
+                                <span>Fire Safety Manager Requirement</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div id="fsm-requirement">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion">
+                            <div class="accordion-header">
+                                <span>Emergency Response Plan</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div id="emergency-plan">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion">
+                            <div class="accordion-header">
+                                <span>Fire Safety Training</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div id="safety-training">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion">
+                            <div class="accordion-header">
+                                <span>Fire Safety Committee</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div id="safety-committee">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion">
+                            <div class="accordion-header">
+                                <span>Maintenance Requirements</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div id="maintenance-requirements">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Fire Safety Management Guide</h2>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Fire Safety Manager (FSM)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Fire Safety Manager requirements:</p>
+                            <ul>
+                                <li>Required for buildings with:
+                                    <ul>
+                                        <li>Height exceeding 24m</li>
+                                        <li>Total floor area exceeding 5000 m²</li>
+                                        <li>Underground occupancy exceeding 2000 m²</li>
+                                    </ul>
+                                </li>
+                                <li>FSM must be certified by SCDF</li>
+                                <li>Responsible for implementing and maintaining the Fire Safety Management Plan</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Fire Evacuation Drills</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Fire evacuation drill requirements:</p>
+                            <ul>
+                                <li>Minimum frequency: Once per year</li>
+                                <li>Must involve all building occupants</li>
+                                <li>Records must be kept for at least 2 years</li>
+                                <li>SCDF may be invited to observe drills</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Company Emergency Response Team (CERT)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>CERT requirements:</p>
+                            <ul>
+                                <li>Required for industrial buildings and buildings with high fire risks</li>
+                                <li>Minimum team size based on building size and risk level</li>
+                                <li>Team members must be trained in basic firefighting and first aid</li>
+                                <li>Regular drills and refresher training required</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Compliance Checker Tab -->
+            <div class="tab-content" id="compliance-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <h2>Fire Code Compliance Checker</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Building Classification</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="building-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fire Alarm Systems</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="alarm-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fire Protection Systems</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="protection-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Evacuation Requirements</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="evacuation-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fire Safety Management</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="management-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="check-compliance">Check Compliance</button>
+                    
+                    <div class="result-section" id="compliance-results">
+                        <h3>Compliance Status</h3>
+                        <div class="result-item">
+                            <div class="result-label">Overall Compliance</div>
+                            <div class="result-value" id="overall-compliance">-</div>
+                        </div>
+                        
+                        <h4>Compliance Checklist</h4>
+                        <ul class="checklist" id="compliance-checklist">
+                            <!-- Checklist items will be added dynamically -->
+                        </ul>
+                        
+                        <h4>Non-Compliance Issues</h4>
+                        <ul id="non-compliance-list">
+                            <!-- Non-compliance items will be added dynamically -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Singapore Fire Code References</h2>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>Key Singapore Standards</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul class="reference-list">
+                                <li class="reference-item">
+                                    <div class="reference-title">SS 645</div>
+                                    <p>Code of Practice for fire safety for buildings and temporary structures</p>
+                                </li>
+                                <li class="reference-item">
+                                    <div class="reference-title">CP 10</div>
+                                    <p>Code of Practice for installation and servicing of electrical fire alarm systems</p>
+                                </li>
+                                <li class="reference-item">
+                                    <div class="reference-title">CP 52</div>
+                                    <p>Code of Practice for automatic fire sprinkler systems</p>
+                                </li>
+                                <li class="reference-item">
+                                    <div class="reference-title">SS 578</div>
+                                    <p>Code of Practice for use and maintenance of portable fire extinguishers</p>
+                                </li>
+                                <li class="reference-item">
+                                    <div class="reference-title">SS 563</div>
+                                    <p>Code of Practice for the design, installation and maintenance of emergency lighting and power supply systems in buildings</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion">
+                        <div class="accordion-header">
+                            <span>SCDF Resources</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <ul>
+                                <li><strong>SCDF Fire Code 2018</strong> - Comprehensive fire safety requirements for buildings in Singapore</li>
+                                <li><strong>SCDF Fire Safety Handbook</strong> - Guidelines for building owners and occupants</li>
+                                <li><strong>Fire Safety Manager Guidelines</strong> - Requirements and responsibilities of Fire Safety Managers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <section class="reference-section">
+        <div class="container">
+            <h2>Singapore Fire Code Compliance</h2>
+            <p>This calculator references the latest Singapore Civil Defence Force (SCDF) Fire Code and Singapore Standards (SS) to ensure accurate compliance with local regulations.</p>
+            
+            <div class="accordion">
+                <div class="accordion-header">
+                    <span>About Singapore Fire Code</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>The Singapore Fire Code is a set of regulations and standards established by the Singapore Civil Defence Force (SCDF) to ensure fire safety in buildings. It covers various aspects including:</p>
+                    <ul>
+                        <li>Building construction and materials</li>
+                        <li>Means of escape</li>
+                        <li>Fire protection systems</li>
+                        <li>Fire safety management</li>
+                        <li>Special hazard protection</li>
+                    </ul>
+                    <p>The Fire Code is regularly updated to incorporate the latest fire safety technologies and practices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">MM Fire Safety Calculator</div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">About</a>
+                    <a href="#" class="footer-link">Contact</a>
+                    <a href="#" class="footer-link">SCDF Website</a>
+                    <a href="#" class="footer-link">Singapore Standards</a>
+                </div>
+                <div class="copyright">© 2025 MM Fire Safety Calculator. This tool is for reference only and does not replace professional fire safety consultation.</div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                header.classList.toggle('open');
+                
+                if (content.classList.contains('open'))
+                {
+                    content.classList.remove('open');
+                } else {
+                    content.classList.add('open');
+                }
+            });
+        });
+        
+        // Building Classification Calculator
+        document.getElementById('calculate-building').addEventListener('click', () => {
+            const buildingType = document.getElementById('building-type').value;
+            const floorArea = parseFloat(document.getElementById('total-floor-area').value) || 0;
+            const occupancyLoad = parseInt(document.getElementById('occupancy-load').value) || 0;
+            const buildingHeight = parseFloat(document.getElementById('building-height').value) || 0;
+            
+            if (!buildingType || floorArea === 0) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Calculate occupancy load factor based on building type
+            let occupancyFactor = 0;
+            let purposeGroup = '';
+            
+            switch (buildingType) {
+                case 'residential':
+                    occupancyFactor = 20;
+                    purposeGroup = 'Purpose Group I';
+                    break;
+                case 'institutional':
+                    occupancyFactor = 15;
+                    purposeGroup = 'Purpose Group II';
+                    break;
+                case 'office':
+                    occupancyFactor = 9;
+                    purposeGroup = 'Purpose Group III';
+                    break;
+                case 'shop':
+                    occupancyFactor = 3;
+                    purposeGroup = 'Purpose Group IV';
+                    break;
+                case 'assembly':
+                    occupancyFactor = 1.5;
+                    purposeGroup = 'Purpose Group V';
+                    break;
+                case 'factory':
+                    occupancyFactor = 10;
+                    purposeGroup = 'Purpose Group VI';
+                    break;
+                case 'storage':
+                    occupancyFactor = 30;
+                    purposeGroup = 'Purpose Group VII';
+                    break;
+                default:
+                    occupancyFactor = 10;
+                    purposeGroup = 'Purpose Group VIII';
+            }
+            
+            // Calculate maximum occupancy
+            const maxOccupancy = Math.ceil(floorArea / occupancyFactor);
+            
+            // Determine if compartmentation is required
+            let compartmentation = 'Not Required';
+            if (floorArea > 5000 || buildingHeight > 24) {
+                compartmentation = 'Required - Fire compartmentation with minimum 1-hour fire resistance rating';
+            } else if (floorArea > 1000) {
+                compartmentation = 'Required - Fire compartmentation with minimum 30-minute fire resistance rating';
+            }
+            
+            // Display results
+            document.getElementById('result-purpose-group').textContent = purposeGroup;
+            document.getElementById('result-occupancy-factor').textContent = `${occupancyFactor} m² per person`;
+            document.getElementById('result-max-occupancy').textContent = `${maxOccupancy} persons`;
+            document.getElementById('result-compartmentation').textContent = compartmentation;
+            
+            document.getElementById('building-results').classList.add('show');
+            
+            // Update compliance progress
+            document.getElementById('building-progress').style.width = '100%';
+        });
+        
+        // Fire Alarm System Calculator
+        document.getElementById('calculate-alarm').addEventListener('click', () => {
+            const buildingType = document.getElementById('alarm-building-type').value;
+            const floorArea = parseFloat(document.getElementById('alarm-floor-area').value) || 0;
+            const floors = parseInt(document.getElementById('alarm-floors').value) || 0;
+            const ceilingHeight = parseFloat(document.getElementById('alarm-ceiling-height').value) || 3;
+            
+            if (!buildingType || floorArea === 0 || floors === 0) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Determine alarm system type
+            let alarmType = 'Manual Fire Alarm System';
+            if (floorArea > 5000 || floors > 4) {
+                alarmType = 'Addressable Automatic Fire Alarm System';
+            } else if (floorArea > 2000 || floors > 2) {
+                alarmType = 'Conventional Automatic Fire Alarm System';
+            }
+            
+            // Calculate detector requirements
+            const smokeDetectorArea = 100; // m² coverage per detector
+            const heatDetectorArea = 50; // m² coverage per detector
+            
+            const smokeDetectors = Math.ceil(floorArea / smokeDetectorArea);
+            const heatDetectors = Math.ceil(floorArea / heatDetectorArea);
+            
+            // Calculate manual call points
+            const callPoints = Math.max(floors, Math.ceil(floorArea / 1000));
+            
+            // Calculate sounders/strobes
+            const sounders = Math.max(floors, Math.ceil(floorArea / 500));
+            
+            // Calculate panels
+            let panels = 1;
+            if (floorArea > 10000 || floors > 10) {
+                panels = 2; // Main panel and repeater panel
+            }
+            
+            // Display results
+            document.getElementById('result-alarm-type').textContent = alarmType;
+            document.getElementById('result-smoke-detectors').textContent = `${smokeDetectors} (1 per ${smokeDetectorArea} m²)`;
+            document.getElementById('result-heat-detectors').textContent = `${heatDetectors} (1 per ${heatDetectorArea} m²)`;
+            document.getElementById('result-call-points').textContent = `${callPoints} minimum (1 per floor and near exits)`;
+            document.getElementById('result-sounders').textContent = `${sounders} minimum`;
+            document.getElementById('result-panels').textContent = panels === 1 ? '1 Main Panel' : '1 Main Panel + 1 Repeater Panel';
+            
+            document.getElementById('alarm-results').classList.add('show');
+            
+            // Update compliance progress
+            document.getElementById('alarm-progress').style.width = '100%';
+        });
+        
+        // Fire Protection Systems Calculator
+        document.getElementById('calculate-protection').addEventListener('click', () => {
+            const buildingType = document.getElementById('protection-building-type').value;
+            const floorArea = parseFloat(document.getElementById('protection-floor-area').value) || 0;
+            const buildingHeight = parseFloat(document.getElementById('protection-height').value) || 0;
+            const hazardClass = document.getElementById('protection-hazard').value;
+            
+            if (!buildingType || floorArea === 0) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Determine if sprinkler system is required
+            let sprinklerRequired = 'Not Required';
+            if (buildingHeight > 24) {
+                sprinklerRequired = 'Required (Building height exceeds 24m)';
+            } else if (floorArea > 5000) {
+                sprinklerRequired = 'Required (Floor area exceeds 5000 m²)';
+            } else if (buildingType === 'industrial' && floorArea > 1000) {
+                sprinklerRequired = 'Required (Industrial building with floor area exceeding 1000 m²)';
+            }
+            
+            // Determine sprinkler type and coverage
+            let sprinklerType = 'Standard Sprinkler System';
+            let coveragePerSprinkler = 12; // m² per sprinkler for light hazard
+            
+            if (hazardClass.startsWith('ordinary')) {
+                coveragePerSprinkler = 9; // m² per sprinkler for ordinary hazard
+            } else if (hazardClass.startsWith('high')) {
+                coveragePerSprinkler = 6; // m² per sprinkler for high hazard
+                sprinklerType = 'High Hazard Sprinkler System';
+            }
+            
+            // Calculate number of sprinkler heads
+            const sprinklerHeads = Math.ceil(floorArea / coveragePerSprinkler);
+            
+            // Calculate fire extinguishers required
+            const extinguishers = Math.ceil(floorArea / 200);
+            
+            // Calculate fire hose reels required
+            const hoseReels = Math.ceil(floorArea / 800);
+            
+            // Display results
+            document.getElementById('result-sprinkler-required').textContent = sprinklerRequired;
+            document.getElementById('result-sprinkler-type').textContent = sprinklerType;
+            document.getElementById('result-sprinkler-heads').textContent = `${sprinklerHeads} (1 per ${coveragePerSprinkler} m²)`;
+            document.getElementById('result-extinguishers').textContent = `${extinguishers} (1 per 200 m²)`;
+            document.getElementById('result-hose-reels').textContent = `${hoseReels} (1 per 800 m²)`;
+            
+            document.getElementById('protection-results').classList.add('show');
+            
+            // Update compliance progress
+            document.getElementById('protection-progress').style.width = '100%';
+        });
+        
+        // Evacuation Requirements Calculator
+        document.getElementById('calculate-evacuation').addEventListener('click', () => {
+            const buildingType = document.getElementById('evac-building-type').value;
+            const floorArea = parseFloat(document.getElementById('evac-floor-area').value) || 0;
+            const occupancy = parseInt(document.getElementById('evac-occupancy').value) || 0;
+            const floors = parseInt(document.getElementById('evac-floors').value) || 0;
+            
+            if (!buildingType || floorArea === 0 || occupancy === 0 || floors === 0) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Calculate number of exit staircases required
+            let exitStaircases = 2; // Minimum 2 for most buildings
+            
+            if (occupancy > 500) {
+                exitStaircases = 3;
+            }
+            if (occupancy > 1000) {
+                exitStaircases = 4;
+            }
+            
+            // Calculate minimum exit width
+            let exitWidth = 1000; // Minimum 1000mm
+            
+            if (occupancy > 200) {
+                // Add 500mm for each additional 100 persons above 200
+                const additionalWidth = Math.ceil((occupancy - 200) / 100) * 500;
+                exitWidth += additionalWidth;
+            }
+            
+            // Determine maximum travel distance
+            let travelDistance = '45m';
+            
+            if (buildingType === 'industrial') {
+                travelDistance = '30m';
+            } else if (buildingType === 'institutional') {
+                travelDistance = '30m';
+            } else {
+                // Check if sprinklers would be required (simplified check)
+                if (floorArea > 5000 || floors > 4) {
+                    travelDistance = '60m (with sprinklers)';
+                }
+            }
+            
+            // Determine emergency lighting requirements
+            let emergencyLighting = 'Required in all exit staircases and escape routes';
+            
+            // Determine exit signs requirements
+            let exitSigns = `Required at all exits and along escape routes (minimum ${exitStaircases + floors} signs)`;
+            
+            // Display results
+            document.getElementById('result-staircases').textContent = `${exitStaircases} staircases`;
+            document.getElementById('result-exit-width').textContent = `${exitWidth}mm`;
+            document.getElementById('result-travel-distance').textContent = travelDistance;
+            document.getElementById('result-emergency-lighting').textContent = emergencyLighting;
+            document.getElementById('result-exit-signs').textContent = exitSigns;
+            
+            document.getElementById('evacuation-results').classList.add('show');
+            
+            // Update compliance progress
+            document.getElementById('evacuation-progress').style.width = '100%';
+        });
+        
+        // Fire Safety Management Plan Generator
+        document.getElementById('generate-fsmp').addEventListener('click', () => {
+            const buildingType = document.getElementById('management-building-type').value;
+            const occupancy = parseInt(document.getElementById('management-occupancy').value) || 0;
+            const floors = parseInt(document.getElementById('management-floors').value) || 0;
+            
+            if (!buildingType || occupancy === 0 || floors === 0) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Determine FSM requirement
+            let fsmRequired = 'Not Required';
+            if (floors > 4 || occupancy > 500) {
+                fsmRequired = `
+                    <p><span class="compliance-status compliant">Required</span></p>
+                    <p>A certified Fire Safety Manager (FSM) must be appointed as per SCDF requirements.</p>
+                    <p>The FSM must:</p>
+                    <ul>
+                        <li>Be certified by SCDF</li>
+                        <li>Implement and maintain the Fire Safety Management Plan</li>
+                        <li>Conduct regular fire safety inspections</li>
+                        <li>Organize fire drills at least once a year</li>
+                        <li>Maintain fire safety records</li>
+                    </ul>
+                `;
+            } else {
+                fsmRequired = `
+                    <p><span class="compliance-status non-compliant">Not Required</span></p>
+                    <p>A certified Fire Safety Manager is not mandatory for this building, but it is recommended to designate a person responsible for fire safety.</p>
+                `;
+            }
+            
+            // Emergency Response Plan
+            let emergencyPlan = `
+                <p>Emergency Response Plan must include:</p>
+                <ul>
+                    <li>Fire evacuation procedures</li>
+                    <li>Assembly point locations</li>
+                    <li>Emergency contact information</li>
+                    <li>Floor plans showing escape routes</li>
+                    <li>Procedures for assisting persons with disabilities</li>
+                </ul>
+            `;
+            
+            // Fire Safety Training
+            let safetyTraining = `
+                <p>Fire Safety Training requirements:</p>
+                <ul>
+                    <li>All staff must receive basic fire safety training</li>
+                    <li>Training must cover use of fire extinguishers and evacuation procedures</li>
+                    <li>Refresher training required annually</li>
+                    <li>Records of training must be maintained</li>
+                </ul>
+            `;
+            
+            // Fire Safety Committee
+            let safetyCommittee = 'Not Required';
+            if (occupancy > 200) {
+                safetyCommittee = `
+                    <p><span class="compliance-status compliant">Required</span></p>
+                    <p>A Fire Safety Committee must be established with representatives from:</p>
+                    <ul>
+                        <li>Management</li>
+                        <li>Security</li>
+                        <li>Maintenance</li>
+                        <li>Tenants/Occupants</li>
+                    </ul>
+                    <p>The committee should meet at least quarterly to review fire safety matters.</p>
+                `;
+            } else {
+                safetyCommittee = `
+                    <p><span class="compliance-status non-compliant">Not Required</span></p>
+                    <p>A formal Fire Safety Committee is not mandatory for this building, but it is recommended to establish one for better fire safety management.</p>
+                `;
+            }
+            
+            // Maintenance Requirements
+            let maintenanceRequirements = `
+                <p>Regular maintenance and testing requirements:</p>
+                <ul>
+                    <li>Fire alarm systems: Monthly testing, annual servicing</li>
+                    <li>Sprinkler systems: Quarterly testing, annual servicing</li>
+                    <li>Fire extinguishers: Annual inspection and servicing</li>
+                    <li>Fire hose reels: Monthly visual inspection, annual servicing</li>
+                    <li>Emergency lighting: Monthly testing, annual full discharge test</li>
+                    <li>Exit signs: Monthly visual inspection</li>
+                </ul>
+                <p>All maintenance records must be kept for at least 2 years.</p>
+            `;
+            
+            // Display results
+            document.getElementById('fsm-requirement').innerHTML = fsmRequired;
+            document.getElementById('emergency-plan').innerHTML = emergencyPlan;
+            document.getElementById('safety-training').innerHTML = safetyTraining;
+            document.getElementById('safety-committee').innerHTML = safetyCommittee;
+            document.getElementById('maintenance-requirements').innerHTML = maintenanceRequirements;
+            
+            document.getElementById('management-results').classList.add('show');
+            
+            // Update compliance progress
+            document.getElementById('management-progress').style.width = '100%';
+        });
+        
+        // Compliance Checker
+        document.getElementById('check-compliance').addEventListener('click', () => {
+            // Get progress values
+            const buildingProgress = document.getElementById('building-progress').style.width;
+            const alarmProgress = document.getElementById('alarm-progress').style.width;
+            const protectionProgress = document.getElementById('protection-progress').style.width;
+            const evacuationProgress = document.getElementById('evacuation-progress').style.width;
+            const managementProgress = document.getElementById('management-progress').style.width;
+            
+            // Check if all calculations have been performed
+            if (buildingProgress !== '100%' || alarmProgress !== '100%' || 
+                protectionProgress !== '100%' || evacuationProgress !== '100%' || 
+                managementProgress !== '100%') {
+                alert('Please complete all calculations before checking compliance');
+                return;
+            }
+            
+            // Create compliance checklist
+            const checklist = document.getElementById('compliance-checklist');
+            checklist.innerHTML = '';
+            
+            // Add checklist items
+            const checklistItems = [
+                { text: 'Building classification correctly identified', compliant: true },
+                { text: 'Occupancy load calculation compliant with SS 645', compliant: true },
+                { text: 'Fire alarm system meets CP 10 requirements', compliant: true },
+                { text: 'Sprinkler system meets CP 52 requirements', compliant: true },
+                { text: 'Fire extinguisher provision compliant with SS 578', compliant: true },
+                { text: 'Exit width sufficient for occupancy load', compliant: true },
+                { text: 'Travel distance within permitted limits', compliant: true },
+                { text: 'Emergency lighting compliant with SS 563', compliant: true },
+                { text: 'Fire Safety Manager appointed as required', compliant: true },
+                { text: 'Fire safety management plan in place', compliant: true }
+            ];
+            
+            // Randomly make some items non-compliant for demonstration
+            const nonCompliantIndices = [];
+            while (nonCompliantIndices.length < 2) {
+                const randomIndex = Math.floor(Math.random() * checklistItems.length);
+                if (!nonCompliantIndices.includes(randomIndex)) {
+                    nonCompliantIndices.push(randomIndex);
+                    checklistItems[randomIndex].compliant = false;
+                }
+            }
+            
+            // Add items to checklist
+            checklistItems.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'checklist-item';
+                
+                const icon = document.createElement('div');
+                icon.className = 'checklist-icon';
+                
+                if (item.compliant) {
+                    icon.innerHTML = '✓';
+                } else {
+                    icon.innerHTML = '✗';
+                    icon.style.color = 'var(--danger)';
+                }
+                
+                const text = document.createElement('div');
+                text.textContent = item.text;
+                
+                li.appendChild(icon);
+                li.appendChild(text);
+                checklist.appendChild(li);
+            });
+            
+            // Create non-compliance list
+            const nonComplianceList = document.getElementById('non-compliance-list');
+            nonComplianceList.innerHTML = '';
+            
+            // Add non-compliant items
+            nonCompliantIndices.forEach(index => {
+                const item = checklistItems[index];
+                const li = document.createElement('li');
+                li.textContent = `${item.text} - Not compliant with SCDF requirements`;
+                nonComplianceList.appendChild(li);
+            });
+            
+            // Set overall compliance status
+            const compliantPercentage = Math.round((checklistItems.length - nonCompliantIndices.length) / checklistItems.length * 100);
+            const overallCompliance = document.getElementById('overall-compliance');
+            
+            if (compliantPercentage === 100) {
+                overallCompliance.innerHTML = '<span class="compliance-status compliant">Fully Compliant</span>';
+            } else if (compliantPercentage >= 80) {
+                overallCompliance.innerHTML = `<span class="compliance-status compliant">${compliantPercentage}% Compliant</span>`;
+            } else {
+                overallCompliance.innerHTML = `<span class="compliance-status non-compliant">${compliantPercentage}% Compliant</span>`;
+            }
+            
+            document.getElementById('compliance-results').classList.add('show');
+        });
+    </script>
+</body>
+</html>
